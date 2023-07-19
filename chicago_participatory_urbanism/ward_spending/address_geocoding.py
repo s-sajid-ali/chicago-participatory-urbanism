@@ -1,6 +1,7 @@
 from shapely.geometry import Point, MultiPoint, LineString, Polygon
 import re
 import math
+import logging
 import chicago_participatory_urbanism.geocoder as geocoder
 import chicago_participatory_urbanism.ward_spending.address_format_processing as afp
 
@@ -35,9 +36,11 @@ def get_geometry_from_location(location):
     try:
         match format:
             case afp.LocationFormat.STREET_ADDRESS:
+                logging.info("get_geometry_from_location: matched STREET_ADDRESS")
                 return get_geometry_from_street_address(location)
 
             case afp.LocationFormat.STREET_ADDRESS_RANGE:
+                logging.info("get_geometry_from_location: matched STREET_ADDRESS_RANGE")
                 (address1, address2) =afp.extract_address_range_street_addresses(location)
                 point1 = get_geometry_from_street_address(address1)
                 point2 = get_geometry_from_street_address(address2)
@@ -45,11 +48,13 @@ def get_geometry_from_location(location):
                 return street_segment
 
             case afp.LocationFormat.INTERSECTION:
+                logging.info("get_geometry_from_location: matched INTERSECTION")
                 (street1, street2) = afp.extract_intersection_street_names(location)
                 intersection = geocoder.get_intersection_coordinates(street1, street2)
                 return intersection
 
             case afp.LocationFormat.STREET_SEGMENT_INTERSECTIONS:
+                logging.info("get_geometry_from_location: matched STREET_SEGMENT_INTERSECTIONS")
                 (primary_street, cross_street1, cross_street2) = afp.extract_segment_intersections_street_names(location)
                 point1 = geocoder.get_intersection_coordinates(primary_street, cross_street1)
                 point2 = geocoder.get_intersection_coordinates(primary_street, cross_street2)
@@ -57,6 +62,7 @@ def get_geometry_from_location(location):
                 return street_segment
 
             case afp.LocationFormat.STREET_SEGMENT_ADDRESS_INTERSECTION:
+                logging.info("get_geometry_from_location: matched STREET_SEGMENT_ADDRESS_INTERSECTION")
                 (address, primary_street, cross_street) = afp.extract_segment_address_intersection_info(location)
                 point1 = geocoder.get_intersection_coordinates(primary_street, cross_street)
                 point2 = get_geometry_from_street_address(address)
@@ -64,6 +70,7 @@ def get_geometry_from_location(location):
                 return street_segment
 
             case afp.LocationFormat.STREET_SEGMENT_INTERSECTION_ADDRESS:
+                logging.info("get_geometry_from_location: matched STREET_SEGMENT_INTERSECTION_ADDRESS")
                 (primary_street, cross_street, address) = afp.extract_segment_intersection_address_info(location)
                 point1 = geocoder.get_intersection_coordinates(primary_street, cross_street)
                 point2 = get_geometry_from_street_address(address)
@@ -71,6 +78,7 @@ def get_geometry_from_location(location):
                 return street_segment
 
             case afp.LocationFormat.ALLEY:
+                logging.info("get_geometry_from_location: matched ALLEY")
                 (street1, street2, street3, street4) = afp.extract_alley_street_names(location)
                 points = []
 
