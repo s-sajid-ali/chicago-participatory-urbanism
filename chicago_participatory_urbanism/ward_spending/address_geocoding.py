@@ -80,15 +80,17 @@ def get_geometry_from_location(location):
             case afp.LocationFormat.ALLEY:
                 logging.info("get_geometry_from_location: matched ALLEY")
                 (street1, street2, street3, street4) = afp.extract_alley_street_names(location)
+                logging.info(f"street1 is {street1}")
+                logging.info(f"street2 is {street2}")
+                logging.info(f"street3 is {street3}")
+                logging.info(f"street4 is {street4}")
                 points = []
 
                 # get every possible intersection of points (streets aren't in any particular order)
                 points.append(geocoder.get_intersection_coordinates(street1, street2))
                 points.append(geocoder.get_intersection_coordinates(street1, street3))
-                points.append(geocoder.get_intersection_coordinates(street1, street4))
-                points.append(geocoder.get_intersection_coordinates(street2, street3))
-                points.append(geocoder.get_intersection_coordinates(street2, street4))
-                points.append(geocoder.get_intersection_coordinates(street3, street4))
+                points.append(geocoder.get_intersection_coordinates(street4, street3))
+                points.append(geocoder.get_intersection_coordinates(street4, street1))
 
                 # remove None values from the array and place points in clockwise order
                 points = [point for point in points if point is not None]
@@ -119,6 +121,8 @@ def get_geometry_from_street_address(street_address):
     return geometry
 
 def get_clockwise_sequence(points):
+    for point in points:
+        print("point is: ", point)
     centroid = Point(sum(point.x for point in points) / len(points), sum(point.y for point in points) / len(points))
 
     angles = []

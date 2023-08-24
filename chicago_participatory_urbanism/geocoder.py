@@ -1,7 +1,6 @@
 import pandas as pd
 import importlib.metadata
 import logging
-import os
 import geopandas as gpd
 from shapely.ops import unary_union
 from shapely.geometry import Point, MultiPoint, LineString, MultiLineString
